@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 # my comment
 
-# Backup current /etc/hosts before modifying
+# Backup original hosts file
 cp /etc/hosts /etc/hosts.bak
 
-# Remove existing lines for localhost and facebook.com (if any)
-sed -i '/localhost/d' /etc/hosts
-sed -i '/facebook.com/d' /etc/hosts
+# Create a temp file
+tmpfile=$(mktemp /tmp/hosts.XXXXXX)
 
-# Add the new mappings
-echo "127.0.0.2 localhost" >> /etc/hosts
-echo "8.8.8.8 facebook.com" >> /etc/hosts
+# Remove lines containing localhost or facebook.com, output to temp file
+grep -v -e 'localhost' -e 'facebook.com' /etc/hosts > "$tmpfile"
+
+# Add new entries
+echo "127.0.0.2 localhost" >> "$tmpfile"
+echo "8.8.8.8 facebook.com" >> "$tmpfile"
+
+# Move temp file back to /etc/hosts (requires sudo if not root)
+mv "$tmpfile" /etc/hosts
