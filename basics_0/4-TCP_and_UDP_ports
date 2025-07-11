@@ -1,0 +1,8 @@
+#!/bin/bash
+# my comment
+
+# Display active Internet (TCP/UDP) listening sockets with PID/program name
+sudo netstat -tunlp
+
+# Display active UNIX domain sockets (only servers) with PID/program name
+sudo netstat -lxnp
