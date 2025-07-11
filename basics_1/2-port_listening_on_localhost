@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#listening on
+
+nc -l 127.0.0.1 98
