@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # my comment
 
 # Display active Internet (TCP/UDP) listening sockets with PID/program name
