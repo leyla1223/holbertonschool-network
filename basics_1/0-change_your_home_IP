@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 # my comment
 
-# Backup original hosts file
+if [[ $EUID -ne 0 ]]; then
+   echo "Please run as root or use sudo"
+   exit 1
+fi
+
+# Backup hosts file
 cp /etc/hosts /etc/hosts.bak
 
-# Create a temp file
-tmpfile=$(mktemp /tmp/hosts.XXXXXX)
+# Update localhost line to 127.0.0.2 if exists, else append it
+if grep -q '^127\.0\.0\.1\s\+localhost' /etc/hosts; then
+    sed -i 's/^127\.0\.0\.1\s\+localhost/127.0.0.2 localhost/' /etc/hosts
+else
+    echo "127.0.0.2 localhost" >> /etc/hosts
+fi
 
-# Remove lines containing localhost or facebook.com, output to temp file
-grep -v -e 'localhost' -e 'facebook.com' /etc/hosts > "$tmpfile"
+# Remove any existing facebook.com line
+sed -i '/facebook\.com/d' /etc/hosts
 
-# Add new entries
-echo "127.0.0.2 localhost" >> "$tmpfile"
-echo "8.8.8.8 facebook.com" >> "$tmpfile"
-
-# Move temp file back to /etc/hosts (requires sudo if not root)
-mv "$tmpfile" /etc/hosts
+# Add facebook.com line
+echo "8.8.8.8 facebook.com" >> /etc/hosts
